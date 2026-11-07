@@ -1,0 +1,39 @@
+/api/v1/auth/otp/send:
+  post:
+    tags:
+      - auth
+    summary: Отправить OTP-код
+    description: Отправляет одноразовый код на указанную почту.
+    operationId: sendOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/SendOtpRequest.yaml'
+    responses:
+      '200':
+        description: Код успешно отправлен.
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/SendOtpResponse.yaml'
+      '400':
+        description: Поле email отсутствует/пустое/невалидный формат
+        content:
+          application/json:
+            schema:
+              $ref: '../../../shared/schemas/Error.yaml'
+            example:
+              code: VALIDATION_ERROR
+              message: "Некорректный формат email"
+      '429':
+        description: Превышен рейтлимит отправок кода
+        content:
+          application/json:
+            schema:
+              $ref: '../../../shared/schemas/Error.yaml'
+            example:
+              code: OTP_RATE_LIMIT_EXCEEDED
+              message: "Повторная отправка возможна через 45 секунд"

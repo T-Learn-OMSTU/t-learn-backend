@@ -1,0 +1,22 @@
+type: object
+required:
+  - requestId
+  - expiresIn
+  - retryAfter
+properties:
+  requestId:
+    type: string
+    format: uuid
+    description: Идентификатор отправки, передаётся в /auth/otp/verify
+    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  expiresIn:
+    type: integer
+    format: int32
+    description: Время жизни кода в секундах
+    example: 300
+  retryAfter:
+    type: integer
+    format: int32
+    description: Через сколько секунд можно запросить код повторно
+    example: 60
+  - 

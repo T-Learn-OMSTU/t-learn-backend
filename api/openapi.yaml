@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: T-Learn API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local
+paths:
+  /auth/request-code:
+    $ref: "./paths/auth.yaml#/~1auth~1request-code"
+  /auth/verify:
+    $ref: "./paths/auth.yaml#/~1auth~1verify"
+  /auth/refresh:
+    $ref: "./paths/auth.yaml#/~1auth~1refresh"
+  /auth/logout:
+    $ref: "./paths/auth.yaml#/~1auth~1logout"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

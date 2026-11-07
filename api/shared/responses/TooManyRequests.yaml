@@ -1,0 +1,8 @@
+description: Превышен лимит запросов. Повторная попытка возможна после паузы
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    example:
+      code: RATE_LIMIT_EXCEEDED
+      message: "Слишком много запросов, повторите позже"
