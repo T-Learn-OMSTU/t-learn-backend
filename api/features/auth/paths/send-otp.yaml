@@ -1,4 +1,4 @@
-/api/v1/auth/otp/send:
+/api/v1/auth/send:
   post:
     tags:
       - auth
