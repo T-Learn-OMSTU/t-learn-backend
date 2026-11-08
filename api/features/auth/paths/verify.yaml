@@ -2,38 +2,44 @@
   post:
     tags:
       - auth
-    summary: Проверть OTP код
-    description: Проверяет 
-    operationId: sendOtp
+    summary: Проверить OTP код
+    description: Проверяет код из письма и возвращает opaque токен доступа
+    operationId: verifyOtp
     security: []
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: '../schemas/SendOtpRequest.yaml'
+            $ref: '../schemas/VerifyRequest.yaml'
     responses:
       '200':
-        description: Код успешно отправлен.
+        description: OTP код подтвержден
         content:
           application/json:
             schema:
-              $ref: '../schemas/SendOtpResponse.yaml'
+              $ref: '../schemas/VerifyResponse.yaml'
       '400':
-        description: Поле email отсутствует/пустое/невалидный формат
+        description: Поле requestId или code отсутствует/пустое/невалидный формат
+        content:
+          application/json:
+            schema:
+              $ref: '../../../shared/responses/BadRequest.yaml'
+      '401':
+        description: Неверный или просроченный код
         content:
           application/json:
             schema:
               $ref: '../../../shared/schemas/Error.yaml'
             example:
-              code: VALIDATION_ERROR
-              message: "Некорректный формат email"
+              code: VERIFY_INVALID_OTP
+              message: "Неверный или просроченный код подтверждения"
       '429':
-        description: Превышен рейтлимит отправок кода
+        description: Превышен рейтлимит подтверждений
         content:
           application/json:
             schema:
               $ref: '../../../shared/schemas/Error.yaml'
             example:
-              code: OTP_RATE_LIMIT_EXCEEDED
-              message: "Повторная отправка возможна через 45 секунд"
+              code: VERIFY_RATE_LIMIT_EXCEEDED
+              message: "Повторное подтверждение возможно через 45 секунд"

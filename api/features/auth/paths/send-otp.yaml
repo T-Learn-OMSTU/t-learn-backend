@@ -35,5 +35,5 @@
             schema:
               $ref: '../../../shared/schemas/Error.yaml'
             example:
-              code: OTP_RATE_LIMIT_EXCEEDED
+              code: SEND_OTP_RATE_LIMIT_EXCEEDED
               message: "Повторная отправка возможна через 45 секунд"
