@@ -1,21 +1,20 @@
-/api/v1/auth/logout:
-  post:
-    tags:
-      - auth
-    summary: Выйти из аккаунта
-    description: Инвалидирует текущий opaque токен доступа, переданный в заголовке Authorization
-    operationId: logout
-    security:
-      - bearerAuth: []
-    responses:
-      '204':
-        description: Токен успешно инвалидирован
-      '401':
-        description: Токен отсутствует, недействителен или истек
-        content:
-          application/json:
-            schema:
-              $ref: '../../../shared/schemas/Error.yaml'
-            example:
-              code: INVALID_TOKEN
-              message: "Токен отсутствует, недействителен или истек"
+post:
+  tags:
+    - auth
+  summary: Выйти из аккаунта
+  description: Инвалидирует текущий opaque токен доступа, переданный в заголовке Authorization
+  operationId: logout
+  security:
+    - bearerAuth: []
+  responses:
+    '204':
+      description: Токен успешно инвалидирован
+    '401':
+      description: Токен отсутствует, недействителен или истек
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          example:
+            code: INVALID_TOKEN
+            message: "Токен отсутствует, недействителен или истек"

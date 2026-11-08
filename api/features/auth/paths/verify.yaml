@@ -1,45 +1,40 @@
-/api/v1/auth/verify:
-  post:
-    tags:
-      - auth
-    summary: Проверить OTP код
-    description: Проверяет код из письма и возвращает opaque токен доступа
-    operationId: verifyOtp
-    security: []
-    requestBody:
-      required: true
+post:
+  tags:
+    - auth
+  summary: Проверить OTP код
+  description: Проверяет код из письма и возвращает opaque токен доступа
+  operationId: verifyOtp
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/VerifyRequest.yaml'
+  responses:
+    '200':
+      description: OTP код подтвержден
       content:
         application/json:
           schema:
-            $ref: '../schemas/VerifyRequest.yaml'
-    responses:
-      '200':
-        description: OTP код подтвержден
-        content:
-          application/json:
-            schema:
-              $ref: '../schemas/VerifyResponse.yaml'
-      '400':
-        description: Поле requestId или code отсутствует/пустое/невалидный формат
-        content:
-          application/json:
-            schema:
-              $ref: '../../../shared/responses/BadRequest.yaml'
-      '401':
-        description: Неверный или просроченный код
-        content:
-          application/json:
-            schema:
-              $ref: '../../../shared/schemas/Error.yaml'
-            example:
-              code: VERIFY_INVALID_OTP
-              message: "Неверный или просроченный код подтверждения"
-      '429':
-        description: Превышен рейтлимит подтверждений
-        content:
-          application/json:
-            schema:
-              $ref: '../../../shared/schemas/Error.yaml'
-            example:
-              code: VERIFY_RATE_LIMIT_EXCEEDED
-              message: "Повторное подтверждение возможно через 45 секунд"
+            $ref: '../schemas/VerifyResponse.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      description: Неверный или просроченный код
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          example:
+            code: VERIFY_INVALID_OTP
+            message: "Неверный или просроченный код подтверждения"
+    '429':
+      description: Превышен рейтлимит подтверждений
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          example:
+            code: VERIFY_RATE_LIMIT_EXCEEDED
+            message: "Повторное подтверждение возможно через 45 секунд"

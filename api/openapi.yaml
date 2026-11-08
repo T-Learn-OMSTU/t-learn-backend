@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  title: t-learn API
+  version: 0.0.1
+  description: Backend API сервиса t-learn
+servers:
+  - url: http://localhost:8080
+    description: Локальная разработка
+tags:
+  - name: auth
+    description: Авторизация по OTP-коду, выдача и инвалидация opaque токена
+paths:
+  /api/v1/auth/send:
+    $ref: './features/auth/paths/send-otp.yaml'
+  /api/v1/auth/verify:
+    $ref: './features/auth/paths/verify.yaml'
+  /api/v1/auth/logout:
+    $ref: './features/auth/paths/logout.yaml'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque токен доступа, полученный на /api/v1/auth/verify
+security:
+  - bearerAuth: []
