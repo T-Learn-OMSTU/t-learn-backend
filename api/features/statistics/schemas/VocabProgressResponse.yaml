@@ -1,0 +1,38 @@
+type: object
+required:
+  - alreadyKnow
+  - inProgress
+  - memorized
+  - remaining
+  - total
+properties:
+  alreadyKnow:
+    type: integer
+    format: int32
+    description: Сколько слов пользователь уже знал (не попали в ротацию)
+    minimum: 0
+    example: 52
+  inProgress:
+    type: integer
+    format: int32
+    description: Сколько слов уже попали в ротацию, но пользователь их еще не выучил
+    minimum: 0
+    example: 1
+  memorized:
+    type: integer
+    format: int32
+    description: Сколько слов из числа тех, что попали в ротацию, пользователь выучил
+    minimum: 0
+    example: 7
+  remaining:
+    type: integer
+    format: int32
+    description: Сколько слов из словаря пользователь не видел вообще
+    minimum: 0
+    example: 25
+  total:
+    type: integer
+    format: int32
+    description: Всего слов в словаре
+    minimum: 0
+    example: 1488

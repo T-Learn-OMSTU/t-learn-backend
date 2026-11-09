@@ -1,0 +1,25 @@
+get:
+  summary: Прогресс пользователя по словарю
+  operationId: getVocabularyStatistics
+  tags:
+    - statistics
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Идентификатор словаря
+      example: 42
+  responses:
+    '200':
+      description: Счётчики прогресса пользователя по словарю
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/VocabProgressResponse.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'
