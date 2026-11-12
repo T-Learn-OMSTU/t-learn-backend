@@ -1,0 +1,443 @@
+openapi: 3.0.3
+info:
+  title: t-learn API
+  version: 0.0.1
+  description: Backend API сервиса t-learn
+servers:
+  - url: http://localhost:8080
+    description: Локальная разработка
+security:
+  - bearerAuth: []
+tags:
+  - name: auth
+    description: Авторизация по OTP-коду, выдача и инвалидация opaque токена
+  - name: statistics
+    description: Статистика обучения пользователя
+  - name: admin
+    description: Эндпоинты панели администратора
+paths:
+  /api/v1/auth/send:
+    post:
+      tags:
+        - auth
+      summary: Отправить OTP-код
+      description: Отправляет одноразовый код на указанную почту.
+      operationId: sendOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+      responses:
+        '200':
+          description: Код успешно отправлен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendOtpResponse'
+        '400':
+          description: Поле email отсутствует/пустое/невалидный формат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: VALIDATION_ERROR
+                message: Некорректный формат email
+        '429':
+          description: Превышен рейтлимит отправок кода
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: SEND_OTP_RATE_LIMIT_EXCEEDED
+                message: Повторная отправка возможна через 45 секунд
+  /api/v1/auth/verify:
+    post:
+      tags:
+        - auth
+      summary: Проверить OTP код
+      description: Проверяет код из письма и возвращает opaque токен доступа
+      operationId: verifyOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequest'
+      responses:
+        '200':
+          description: OTP код подтвержден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Неверный или просроченный код
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: VERIFY_INVALID_OTP
+                message: Неверный или просроченный код подтверждения
+        '429':
+          description: Превышен рейтлимит подтверждений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: VERIFY_RATE_LIMIT_EXCEEDED
+                message: Повторное подтверждение возможно через 45 секунд
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - auth
+      summary: Выйти из аккаунта
+      description: Инвалидирует текущий opaque токен доступа, переданный в заголовке Authorization
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Токен успешно инвалидирован
+        '401':
+          description: Токен отсутствует, недействителен или истек
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: INVALID_TOKEN
+                message: Токен отсутствует, недействителен или истек
+  /api/v1/statistics/memorized-per-day:
+    get:
+      summary: Количество выученных слов по дням
+      operationId: getMemorizedWordsPerDay
+      tags:
+        - statistics
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Начало периода (включительно)
+          example: '2026-10-11'
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Конец периода (включительно)
+          example: '2026-11-10'
+      responses:
+        '200':
+          description: Выученные слова по дням (возвращаются только дни с ненулевым значением)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemorizedPerDayResponse'
+        '400':
+          description: Некорректный период
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidPeriod:
+                  value:
+                    code: STATISTICS_INVALID_PERIOD
+                    message: Дата from позже даты to
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/statistics/vocabularies/{vocabularyId}/progress:
+    get:
+      summary: Прогресс пользователя по словарю
+      operationId: getVocabularyStatistics
+      tags:
+        - statistics
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор словаря
+          example: 42
+      responses:
+        '200':
+          description: Счётчики прогресса пользователя по словарю
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VocabProgressResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/admin/statistics/users/{userId}:
+    get:
+      summary: Статистика пользователя
+      operationId: getAdminUserStatistics
+      tags:
+        - admin
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя
+          example: 42
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Начало периода (включительно)
+          example: '2026-10-11'
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Конец периода (включительно)
+          example: '2026-11-10'
+      responses:
+        '200':
+          description: Вся статистика пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserStatisticsResponse'
+        '400':
+          description: Некорректный период
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidPeriod:
+                  value:
+                    code: STATISTICS_INVALID_PERIOD
+                    message: Дата from позже даты to
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque токен доступа, полученный на /api/v1/auth/verify
+  schemas:
+    SendOtpRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: Почта, на которую отправляется код
+          example: user@example.com
+    SendOtpResponse:
+      type: object
+      required:
+        - requestId
+        - expiresIn
+        - retryAfter
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          description: Идентификатор отправки
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        expiresIn:
+          type: integer
+          format: int32
+          description: Время жизни кода в секундах
+          example: 300
+        retryAfter:
+          type: integer
+          format: int32
+          description: Через сколько секунд можно запросить код повторно
+          example: 60
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Машиночитаемый код ошибки, стабильная константа для обработки на клиенте
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          description: Человекочитаемое описание ошибки
+          example: Некорректное значение поля
+    VerifyRequest:
+      type: object
+      required:
+        - requestId
+        - code
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          description: Идентификатор отправки
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        code:
+          type: string
+          pattern: ^[0-9]{6}$
+          minLength: 6
+          maxLength: 6
+          description: Шестизначный код из письма
+          example: '483920'
+    VerifyResponse:
+      type: object
+      required:
+        - accessToken
+        - tokenType
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+          description: Opaque токен доступа, передается в заголовке Authorization
+          example: 9f2c1b7a4d6e8f0a3b5c7d9e1f2a4b6c
+        tokenType:
+          type: string
+          description: Тип токена, всегда Bearer
+          enum:
+            - Bearer
+          example: Bearer
+        expiresIn:
+          type: integer
+          format: int32
+          description: Время жизни токена в секундах
+          example: 2592000
+    MemorizedPerDayResponse:
+      type: array
+      items:
+        type: object
+        required:
+          - date
+          - count
+        properties:
+          date:
+            type: string
+            format: date
+            example: '2026-11-07'
+          count:
+            type: integer
+            format: int32
+            minimum: 0
+            example: 6
+    VocabProgressResponse:
+      type: object
+      required:
+        - alreadyKnow
+        - inProgress
+        - memorized
+        - remaining
+        - total
+      properties:
+        alreadyKnow:
+          type: integer
+          format: int32
+          description: Сколько слов пользователь уже знал (не попали в ротацию)
+          minimum: 0
+          example: 52
+        inProgress:
+          type: integer
+          format: int32
+          description: Сколько слов уже попали в ротацию, но пользователь их еще не выучил
+          minimum: 0
+          example: 1
+        memorized:
+          type: integer
+          format: int32
+          description: Сколько слов из числа тех, что попали в ротацию, пользователь выучил
+          minimum: 0
+          example: 7
+        remaining:
+          type: integer
+          format: int32
+          description: Сколько слов из словаря пользователь не видел вообще
+          minimum: 0
+          example: 25
+        total:
+          type: integer
+          format: int32
+          description: Всего слов в словаре
+          minimum: 0
+          example: 1488
+    AdminUserStatisticsResponse:
+      type: object
+      required:
+        - userId
+        - memorizedPerDay
+        - vocabularies
+      properties:
+        userId:
+          type: integer
+          format: int64
+        memorizedPerDay:
+          $ref: '#/components/schemas/MemorizedPerDayResponse'
+        vocabularies:
+          type: array
+          description: Статистика по словарям, с которыми пользователь работал
+          items:
+            allOf:
+              - $ref: '#/components/schemas/VocabProgressResponse'
+              - type: object
+                required:
+                  - vocabularyId
+                properties:
+                  vocabularyId:
+                    type: integer
+                    format: int64
+  responses:
+    BadRequest:
+      description: Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: VALIDATION_ERROR
+            message: Некорректное значение поля
+    Unauthorized:
+      description: Не авторизован (токен отсутствует или недействителен)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: Требуется авторизация
+    NotFound:
+      description: Ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND
+            message: Ресурс не найден
