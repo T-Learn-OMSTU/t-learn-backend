@@ -1,0 +1,53 @@
+get:
+  summary: Статистика пользователя
+  operationId: getAdminUserStatistics
+  tags:
+    - admin
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Идентификатор пользователя
+      example: 42
+    - name: from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Начало периода (включительно)
+      example: '2026-10-11'
+    - name: to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Конец периода (включительно)
+      example: '2026-11-10'
+  responses:
+    '200':
+      description: Вся статистика пользователя
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AdminUserStatisticsResponse.yaml'
+    '400':
+      description: Некорректный период
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            invalidPeriod:
+              value:
+                code: STATISTICS_INVALID_PERIOD
+                message: Дата from позже даты to
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'
+    # 403 не возвращаем, чтобы не показывать существование админской ручки. Не-админ получает 404

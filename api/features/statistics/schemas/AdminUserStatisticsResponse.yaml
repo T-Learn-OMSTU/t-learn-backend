@@ -1,0 +1,24 @@
+type: object
+required:
+  - userId
+  - memorizedPerDay
+  - vocabularies
+properties:
+  userId:
+    type: integer
+    format: int64
+  memorizedPerDay:
+    $ref: './MemorizedPerDayResponse.yaml'
+  vocabularies:
+    type: array
+    description: Статистика по словарям, с которыми пользователь работал
+    items:
+      allOf:
+        - $ref: './VocabProgressResponse.yaml'
+        - type: object
+          required:
+            - vocabularyId
+          properties:
+            vocabularyId:
+              type: integer
+              format: int64

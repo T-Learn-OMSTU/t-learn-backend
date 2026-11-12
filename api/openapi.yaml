@@ -11,6 +11,8 @@ tags:
     description: Авторизация по OTP-коду, выдача и инвалидация opaque токена
   - name: statistics
     description: Статистика обучения пользователя
+  - name: admin
+    description: Эндпоинты панели администратора
 paths:
   /api/v1/auth/send:
     $ref: './features/auth/paths/SendOtp.yaml'
@@ -22,6 +24,8 @@ paths:
     $ref: './features/statistics/paths/MemorizedPerDay.yaml'
   /api/v1/statistics/vocabularies/{vocabularyId}/progress:
     $ref: './features/statistics/paths/VocabProgress.yaml'
+  /api/v1/admin/statistics/users/{userId}:
+    $ref: './features/statistics/paths/AdminUserStatistics.yaml'
 components:
   securitySchemes:
     bearerAuth:
