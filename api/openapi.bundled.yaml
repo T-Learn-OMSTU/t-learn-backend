@@ -103,8 +103,6 @@ paths:
       summary: Выйти из аккаунта
       description: Инвалидирует текущий opaque токен доступа, переданный в заголовке Authorization
       operationId: logout
-      security:
-        - bearerAuth: []
       responses:
         '204':
           description: Токен успешно инвалидирован
@@ -191,7 +189,7 @@ paths:
       summary: Статистика пользователя
       operationId: getAdminUserStatistics
       tags:
-        - admin
+        - statistics
       parameters:
         - name: userId
           in: path
@@ -237,6 +235,137 @@ paths:
                     message: Дата from позже даты to
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/admin/users:
+    get:
+      tags:
+        - user
+      summary: Список пользователей (админка)
+      description: Возвращает постраничный список пользователей для панели администратора/модератора.
+      operationId: getAdminUsersList
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 1
+          description: Номер страницы, нумерация с 1
+          example: 1
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Размер страницы; больше 100 записей за раз запросить нельзя
+          example: 50
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Подстрока для поиска по email, без учёта регистра
+          example: ivanov@corp.org
+      responses:
+        '200':
+          description: Страница списка пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUsersListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/admin/users/{userId}:
+    get:
+      tags:
+        - user
+      summary: Данные о пользователе
+      description: Возвращает данные об одном пользователе
+      operationId: getAdminUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя
+          example: 42
+      responses:
+        '200':
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserSummary'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/admin/users/{userId}/role:
+    patch:
+      tags:
+        - user
+      summary: Обновить роль пользователю
+      operationId: updateAdminUserRole
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя, которому меняют роль
+          example: 42
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserUpdateRoleRequest'
+      responses:
+        '200':
+          description: Роль изменена; возвращается актуальная карточка пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserSummary'
+        '400':
+          description: Ошибка валидации тела запроса или недопустимая смена роли
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validationError:
+                  summary: Невалидное тело запроса — роль отсутствует или не из списка
+                  value:
+                    code: VALIDATION_ERROR
+                    message: Ошибка валидации запроса
+                selfRoleChange:
+                  summary: Администратор пытается изменить роль самому себе
+                  value:
+                    code: USER_SELF_ROLE_CHANGE
+                    message: Нельзя изменить роль самому себе
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
 components:
@@ -413,6 +542,74 @@ components:
                   vocabularyId:
                     type: integer
                     format: int64
+    AdminUserSummary:
+      type: object
+      description: Карточка пользователя в списке админки
+      required:
+        - id
+        - email
+        - role
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Идентификатор пользователя
+          example: 42
+        email:
+          type: string
+          format: email
+          description: Рабочая почта, на которую пользователь проходит OTP-авторизацию
+          example: email@example.com
+        role:
+          type: string
+          description: Роль пользователя
+          enum:
+            - USER
+            - MODERATOR
+            - ADMIN
+          example: USER
+    AdminUsersListResponse:
+      type: object
+      description: Страница списка пользователей
+      required:
+        - items
+        - total
+        - page
+        - size
+      properties:
+        items:
+          type: array
+          description: Пользователи текущей страницы; пустой массив, если страница за пределами диапазона
+          items:
+            $ref: '#/components/schemas/AdminUserSummary'
+        total:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Общее число пользователей с учётом фильтра search; фронту нужно для отрисовки номеров страниц
+          example: 1342
+        page:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Номер возвращённой страницы
+          example: 1
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Размер страницы
+          example: 67
+    AdminUserUpdateRoleRequest:
+      type: object
+      description: Тело запроса на смену роли пользователя
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          description: Новая роль пользователя. - USER - MODERATOR - ADMIN
+          example: MODERATOR
   responses:
     BadRequest:
       description: Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)
@@ -441,3 +638,12 @@ components:
           example:
             code: NOT_FOUND
             message: Ресурс не найден
+    Forbidden:
+      description: Доступ запрещён (недостаточно прав)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: FORBIDDEN
+            message: Недостаточно прав для выполнения операции
