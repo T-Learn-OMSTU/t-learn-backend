@@ -2,7 +2,7 @@ get:
   summary: Статистика пользователя
   operationId: getAdminUserStatistics
   tags:
-    - admin
+    - statistics
   parameters:
     - name: userId
       in: path
