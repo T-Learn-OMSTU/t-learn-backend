@@ -1,0 +1,8 @@
+description: Доступ запрещён (недостаточно прав)
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    example:
+      code: FORBIDDEN
+      message: Недостаточно прав для выполнения операции
