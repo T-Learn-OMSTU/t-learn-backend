@@ -4,8 +4,6 @@ post:
   summary: Выйти из аккаунта
   description: Инвалидирует текущий opaque токен доступа, переданный в заголовке Authorization
   operationId: logout
-  security:
-    - bearerAuth: []
   responses:
     '204':
       description: Токен успешно инвалидирован
