@@ -48,6 +48,7 @@ get:
                 message: Дата from позже даты to
     '401':
       $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
     '404':
       $ref: '../../../shared/responses/NotFound.yaml'
-    # 403 не возвращаем, чтобы не показывать существование админской ручки. Не-админ получает 404
