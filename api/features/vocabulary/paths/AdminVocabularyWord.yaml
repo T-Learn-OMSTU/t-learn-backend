@@ -1,0 +1,125 @@
+get:
+  tags:
+    - vocabulary
+  summary: Слова словаря
+  description: Возвращает постраничный список слов словаря для редактирования в админке.
+  operationId: getAdminVocabularyWords
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Идентификатор словаря
+      schema:
+        type: integer
+        format: int64
+      example: 1
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+      description: Номер страницы, нумерация с 1
+      example: 1
+    - name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 50
+      description: Размер страницы; больше 100 записей за раз запросить нельзя
+      example: 50
+    - name: search
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Подстрока для поиска по word или translation, без учёта регистра
+      example: feel
+  responses:
+    '200':
+      description: Страница списка слов
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AdminWordsListResponse.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Словарь с указанным vocabularyId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            vocabularyNotFound:
+              summary: Словарь не найден
+              value:
+                code: VOCABULARY_NOT_FOUND
+                message: "Словарь не найден"
+post:
+  tags:
+    - vocabulary
+  summary: Добавление слова в словарь
+  operationId: createAdminVocabularyWord
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Идентификатор словаря, в который добавляется слово
+      schema:
+        type: integer
+        format: int64
+      example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/AdminCreateWordRequest.yaml'
+  responses:
+    '201':
+      description: Слово добавлено
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Word.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Словарь с указанным vocabularyId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            vocabularyNotFound:
+              summary: Словарь не найден
+              value:
+                code: VOCABULARY_NOT_FOUND
+                message: "Словарь не найден"
+    '409':
+      description: Слово с таким написанием уже есть в этом словаре
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            wordDuplicate:
+              summary: Дубликат слова в словаре
+              value:
+                code: VOCABULARY_WORD_DUPLICATE
+                message: "Слово уже есть в словаре"

@@ -1,0 +1,90 @@
+patch:
+  tags:
+    - vocabulary
+  summary: Редактирование слова
+  operationId: updateAdminWord
+  parameters:
+    - name: wordId
+      in: path
+      required: true
+      description: Идентификатор слова
+      schema:
+        type: integer
+        format: int64
+      example: 12345
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/AdminUpdateWordRequest.yaml'
+  responses:
+    '200':
+      description: Слово обновлено; возвращается актуальное состояние
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Word.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Слово с указанным wordId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            wordNotFound:
+              summary: Слово не найдено
+              value:
+                code: VOCABULARY_WORD_NOT_FOUND
+                message: "Слово не найдено"
+    '409':
+      description: Слово с таким написанием уже есть в этом словаре
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            wordDuplicate:
+              summary: Дубликат слова в словаре
+              value:
+                code: VOCABULARY_WORD_DUPLICATE
+                message: "Слово уже есть в словаре"
+delete:
+  tags:
+    - vocabulary
+  summary: Удаление слова
+  operationId: deleteAdminWord
+  parameters:
+    - name: wordId
+      in: path
+      required: true
+      description: Идентификатор удаляемого слова
+      schema:
+        type: integer
+        format: int64
+      example: 12345
+  responses:
+    '204':
+      description: Слово удалено
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Слово с указанным wordId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            wordNotFound:
+              summary: Слово не найдено
+              value:
+                code: VOCABULARY_WORD_NOT_FOUND
+                message: "Слово не найдено"

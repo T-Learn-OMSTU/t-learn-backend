@@ -1,0 +1,9 @@
+type: object
+description: Изменения словаря
+required:
+  - name
+properties:
+  name:
+    type: string
+    description: Новое название словаря, отображается пользователю при выборе
+    example: "Базовый английский"

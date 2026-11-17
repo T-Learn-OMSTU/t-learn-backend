@@ -1,0 +1,30 @@
+type: object
+description: Слово словаря (без id для создания в словаре)
+required:
+  - word
+  - translation
+  - transcription
+  - type
+properties:
+  word:
+    type: string
+    description: Английское написание слова
+    example: "feel"
+  transcription:
+    type: string
+    description: Транскрипция английского слова
+    example: "fil"
+  translation:
+    type: string
+    description: Перевод на русский
+    example: "чувствовать"
+  type:
+    type: string
+    enum:
+    - NOUN
+    - ADJECTIVE
+    - VERB
+    - PRONOUN
+    - ADVERB
+    example:
+      NOUN

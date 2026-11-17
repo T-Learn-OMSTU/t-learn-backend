@@ -1,0 +1,22 @@
+type: object
+description: Словарь в каталоге - набор слов для обучения
+required:
+  - id
+  - name
+  - wordsCount
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Идентификатор словаря
+    example: 1
+  name:
+    type: string
+    description: Название словаря, отображается пользователю при выборе
+    example: "Базовый английский"
+  wordsCount:
+    type: integer
+    format: int32
+    minimum: 0
+    description: Количество слов в словаре
+    example: 1500

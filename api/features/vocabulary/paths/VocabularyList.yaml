@@ -1,0 +1,16 @@
+get:
+  tags:
+    - vocabulary
+  summary: Каталог словарей
+  operationId: getVocabularyList
+  responses:
+    '200':
+      description: Список словарей с метаданными
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/VocabularySummary.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'

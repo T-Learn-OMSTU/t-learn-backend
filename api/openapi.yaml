@@ -13,6 +13,8 @@ tags:
     description: Статистика обучения пользователя
   - name: admin
     description: Эндпоинты панели администратора
+  - name: vocabulary
+    description: Словари для обучения и их администрирование
 paths:
   /api/v1/auth/send:
     $ref: './features/auth/paths/SendOtp.yaml'
@@ -26,6 +28,16 @@ paths:
     $ref: './features/statistics/paths/VocabProgress.yaml'
   /api/v1/admin/statistics/users/{userId}:
     $ref: './features/statistics/paths/AdminUserStatistics.yaml'
+  /api/v1/admin/vocabularies/import:
+    $ref: './features/vocabulary/paths/AdminVocabularyImport.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}:
+    $ref: './features/vocabulary/paths/AdminVocabulary.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}/export:
+    $ref: './features/vocabulary/paths/AdminVocabularyExport.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}/words:
+    $ref: './features/vocabulary/paths/AdminVocabularyWord.yaml'
+  /api/v1/admin/words/{wordId}:
+    $ref: './features/vocabulary/paths/AdminWord.yaml'
 components:
   securitySchemes:
     bearerAuth:

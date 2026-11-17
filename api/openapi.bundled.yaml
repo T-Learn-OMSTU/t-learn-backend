@@ -15,6 +15,8 @@ tags:
     description: Статистика обучения пользователя
   - name: admin
     description: Эндпоинты панели администратора
+  - name: vocabulary
+    description: Словари для обучения и их администрирование
 paths:
   /api/v1/auth/send:
     post:
@@ -235,16 +237,196 @@ paths:
                     message: Дата from позже даты to
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-  /api/v1/admin/users:
+  /api/v1/admin/vocabularies/import:
+    post:
+      tags:
+        - vocabulary
+      summary: Импорт словаря из xls
+      operationId: importAdminVocabulary
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - file
+              properties:
+                name:
+                  type: string
+                  description: Название создаваемого словаря
+                  example: Базовый английский
+                file:
+                  type: string
+                  format: binary
+                  description: xlsx-файл со словами
+      responses:
+        '201':
+          description: Словарь создан и наполнен словами из файла
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VocabularySummary'
+        '400':
+          description: Ошибка валидации запроса или файла импорта
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validationError:
+                  summary: Невалидные параметры запроса
+                  value:
+                    code: VALIDATION_ERROR
+                    message: Некорректное значение поля
+                invalidFile:
+                  summary: Файл не читается или нарушен формат колонок
+                  value:
+                    code: VOCABULARY_IMPORT_INVALID
+                    message: 'Строка 17: пустое значение в колонке word'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/admin/vocabularies/{vocabularyId}:
+    patch:
+      tags:
+        - vocabulary
+      summary: Переименование словаря
+      operationId: updateAdminVocabulary
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Идентификатор словаря
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateVocabularyRequest'
+      responses:
+        '200':
+          description: Словарь переименован; возвращается актуальное состояние
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VocabularySummary'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Словарь с указанным vocabularyId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                vocabularyNotFound:
+                  summary: Словарь не найден
+                  value:
+                    code: VOCABULARY_NOT_FOUND
+                    message: Словарь не найден
+    delete:
+      tags:
+        - vocabulary
+      summary: Удаление словаря
+      operationId: deleteAdminVocabulary
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Идентификатор удаляемого словаря
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      responses:
+        '204':
+          description: Словарь удалён
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Словарь с указанным vocabularyId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                vocabularyNotFound:
+                  summary: Словарь не найден
+                  value:
+                    code: VOCABULARY_NOT_FOUND
+                    message: Словарь не найден
+  /api/v1/admin/vocabularies/{vocabularyId}/export:
     get:
       tags:
-        - user
-      summary: Список пользователей (админка)
-      description: Возвращает постраничный список пользователей для панели администратора/модератора.
-      operationId: getAdminUsersList
+        - vocabulary
+      summary: Выгрузка словаря в xls
+      operationId: exportAdminVocabulary
       parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Идентификатор выгружаемого словаря
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      responses:
+        '200':
+          description: xlsx-файл со словами словаря
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Словарь с указанным vocabularyId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                vocabularyNotFound:
+                  summary: Словарь не найден
+                  value:
+                    code: VOCABULARY_NOT_FOUND
+                    message: Словарь не найден
+  /api/v1/admin/vocabularies/{vocabularyId}/words:
+    get:
+      tags:
+        - vocabulary
+      summary: Слова словаря
+      description: Возвращает постраничный список слов словаря для редактирования в админке.
+      operationId: getAdminVocabularyWords
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Идентификатор словаря
+          schema:
+            type: integer
+            format: int64
+          example: 1
         - name: page
           in: query
           required: false
@@ -271,44 +453,15 @@ paths:
           required: false
           schema:
             type: string
-          description: Подстрока для поиска по email, без учёта регистра
-          example: ivanov@corp.org
+          description: Подстрока для поиска по word или translation, без учёта регистра
+          example: feel
       responses:
         '200':
-          description: Страница списка пользователей
+          description: Страница списка слов
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUsersListResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-  /api/v1/admin/users/{userId}:
-    get:
-      tags:
-        - user
-      summary: Данные о пользователе
-      description: Возвращает данные об одном пользователе
-      operationId: getAdminUserById
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-          description: Идентификатор пользователя
-          example: 42
-      responses:
-        '200':
-          description: Данные пользователя
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminUserSummary'
+                $ref: '#/components/schemas/AdminWordsListResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -316,58 +469,165 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
-          $ref: '#/components/responses/NotFound'
-  /api/v1/admin/users/{userId}/role:
-    patch:
-      tags:
-        - user
-      summary: Обновить роль пользователю
-      operationId: updateAdminUserRole
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-          description: Идентификатор пользователя, которому меняют роль
-          example: 42
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminUserUpdateRoleRequest'
-      responses:
-        '200':
-          description: Роль изменена; возвращается актуальная карточка пользователя
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminUserSummary'
-        '400':
-          description: Ошибка валидации тела запроса или недопустимая смена роли
+          description: Словарь с указанным vocabularyId не существует
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               examples:
-                validationError:
-                  summary: Невалидное тело запроса — роль отсутствует или не из списка
+                vocabularyNotFound:
+                  summary: Словарь не найден
                   value:
-                    code: VALIDATION_ERROR
-                    message: Ошибка валидации запроса
-                selfRoleChange:
-                  summary: Администратор пытается изменить роль самому себе
-                  value:
-                    code: USER_SELF_ROLE_CHANGE
-                    message: Нельзя изменить роль самому себе
+                    code: VOCABULARY_NOT_FOUND
+                    message: Словарь не найден
+    post:
+      tags:
+        - vocabulary
+      summary: Добавление слова в словарь
+      operationId: createAdminVocabularyWord
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Идентификатор словаря, в который добавляется слово
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateWordRequest'
+      responses:
+        '201':
+          description: Слово добавлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Словарь с указанным vocabularyId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                vocabularyNotFound:
+                  summary: Словарь не найден
+                  value:
+                    code: VOCABULARY_NOT_FOUND
+                    message: Словарь не найден
+        '409':
+          description: Слово с таким написанием уже есть в этом словаре
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                wordDuplicate:
+                  summary: Дубликат слова в словаре
+                  value:
+                    code: VOCABULARY_WORD_DUPLICATE
+                    message: Слово уже есть в словаре
+  /api/v1/admin/words/{wordId}:
+    patch:
+      tags:
+        - vocabulary
+      summary: Редактирование слова
+      operationId: updateAdminWord
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Идентификатор слова
+          schema:
+            type: integer
+            format: int64
+          example: 12345
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateWordRequest'
+      responses:
+        '200':
+          description: Слово обновлено; возвращается актуальное состояние
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Слово с указанным wordId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                wordNotFound:
+                  summary: Слово не найдено
+                  value:
+                    code: VOCABULARY_WORD_NOT_FOUND
+                    message: Слово не найдено
+        '409':
+          description: Слово с таким написанием уже есть в этом словаре
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                wordDuplicate:
+                  summary: Дубликат слова в словаре
+                  value:
+                    code: VOCABULARY_WORD_DUPLICATE
+                    message: Слово уже есть в словаре
+    delete:
+      tags:
+        - vocabulary
+      summary: Удаление слова
+      operationId: deleteAdminWord
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Идентификатор удаляемого слова
+          schema:
+            type: integer
+            format: int64
+          example: 12345
+      responses:
+        '204':
+          description: Слово удалено
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Слово с указанным wordId не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                wordNotFound:
+                  summary: Слово не найдено
+                  value:
+                    code: VOCABULARY_WORD_NOT_FOUND
+                    message: Слово не найдено
 components:
   securitySchemes:
     bearerAuth:
@@ -542,35 +802,78 @@ components:
                   vocabularyId:
                     type: integer
                     format: int64
-    AdminUserSummary:
+    VocabularySummary:
       type: object
-      description: Карточка пользователя в списке админки
+      description: Словарь в каталоге - набор слов для обучения
       required:
         - id
-        - email
-        - role
+        - name
+        - wordsCount
       properties:
         id:
           type: integer
           format: int64
-          description: Идентификатор пользователя
-          example: 42
-        email:
+          description: Идентификатор словаря
+          example: 1
+        name:
           type: string
-          format: email
-          description: Рабочая почта, на которую пользователь проходит OTP-авторизацию
-          example: email@example.com
-        role:
-          type: string
-          description: Роль пользователя
-          enum:
-            - USER
-            - MODERATOR
-            - ADMIN
-          example: USER
-    AdminUsersListResponse:
+          description: Название словаря, отображается пользователю при выборе
+          example: Базовый английский
+        wordsCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Количество слов в словаре
+          example: 1500
+    AdminUpdateVocabularyRequest:
       type: object
-      description: Страница списка пользователей
+      description: Изменения словаря
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Новое название словаря, отображается пользователю при выборе
+          example: Базовый английский
+    Word:
+      type: object
+      description: Слово словаря
+      required:
+        - id
+        - word
+        - translation
+        - transcription
+        - type
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Идентификатор слова
+          example: 67
+        word:
+          type: string
+          description: Английское написание слова
+          example: feel
+        transcription:
+          type: string
+          description: Транскрипция английского слова
+          example: fil
+        translation:
+          type: string
+          description: Перевод на русский
+          example: чувствовать
+        type:
+          type: string
+          enum:
+            - NOUN
+            - ADJECTIVE
+            - VERB
+            - PRONOUN
+            - ADVERB
+          example: NOUN
+    AdminWordsListResponse:
+      type: object
+      description: Страница списка слов словаря
       required:
         - items
         - total
@@ -579,15 +882,15 @@ components:
       properties:
         items:
           type: array
-          description: Пользователи текущей страницы; пустой массив, если страница за пределами диапазона
+          description: Слова текущей страницы; пустой массив, если страница за пределами диапазона
           items:
-            $ref: '#/components/schemas/AdminUserSummary'
+            $ref: '#/components/schemas/Word'
         total:
           type: integer
           format: int32
           minimum: 0
-          description: Общее число пользователей с учётом фильтра search; фронту нужно для отрисовки номеров страниц
-          example: 1342
+          description: Общее число слов в словаре с учётом фильтра search; фронту нужно для отрисовки
+          example: 1500
         page:
           type: integer
           format: int32
@@ -599,17 +902,63 @@ components:
           format: int32
           minimum: 1
           description: Размер страницы
-          example: 67
-    AdminUserUpdateRoleRequest:
+          example: 50
+    AdminCreateWordRequest:
       type: object
-      description: Тело запроса на смену роли пользователя
+      description: Слово словаря (без id для создания в словаре)
       required:
-        - role
+        - word
+        - translation
+        - transcription
+        - type
       properties:
-        role:
+        word:
           type: string
-          description: Новая роль пользователя. - USER - MODERATOR - ADMIN
-          example: MODERATOR
+          description: Английское написание слова
+          example: feel
+        transcription:
+          type: string
+          description: Транскрипция английского слова
+          example: fil
+        translation:
+          type: string
+          description: Перевод на русский
+          example: чувствовать
+        type:
+          type: string
+          enum:
+            - NOUN
+            - ADJECTIVE
+            - VERB
+            - PRONOUN
+            - ADVERB
+          example: NOUN
+    AdminUpdateWordRequest:
+      type: object
+      description: Изменения слова; передаются только изменяемые поля, минимум одно
+      minProperties: 1
+      properties:
+        word:
+          type: string
+          description: Английское написание слова
+          example: feel
+        transcription:
+          type: string
+          description: Транскрипция английского слова
+          example: fil
+        translation:
+          type: string
+          description: Перевод на русский
+          example: чувствовать
+        type:
+          type: string
+          enum:
+            - NOUN
+            - ADJECTIVE
+            - VERB
+            - PRONOUN
+            - ADVERB
+          example: NOUN
   responses:
     BadRequest:
       description: Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)

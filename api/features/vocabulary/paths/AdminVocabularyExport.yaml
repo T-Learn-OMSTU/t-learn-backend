@@ -1,0 +1,38 @@
+get:
+  tags:
+    - vocabulary
+  summary: Выгрузка словаря в xls
+  operationId: exportAdminVocabulary
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Идентификатор выгружаемого словаря
+      schema:
+        type: integer
+        format: int64
+      example: 1
+  responses:
+    '200':
+      description: xlsx-файл со словами словаря
+      content:
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Словарь с указанным vocabularyId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            vocabularyNotFound:
+              summary: Словарь не найден
+              value:
+                code: VOCABULARY_NOT_FOUND
+                message: "Словарь не найден"
