@@ -243,6 +243,24 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/admin/statistics/export:
+    get:
+      tags:
+        - statistics
+      operationId: exportAdminStatistics
+      summary: Выгрузка статистики пользователей в xls
+      responses:
+        '200':
+          description: Файл xlsx со статистикой (скачивание).
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/v1/admin/vocabularies/import:
     post:
       tags:

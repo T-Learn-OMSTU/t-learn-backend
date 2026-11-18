@@ -30,6 +30,8 @@ paths:
     $ref: './features/statistics/paths/VocabProgress.yaml'
   /api/v1/admin/statistics/users/{userId}:
     $ref: './features/statistics/paths/AdminUserStatistics.yaml'
+  /api/v1/admin/statistics/export:
+    $ref: './features/statistics/paths/AdminStatisticsExport.yaml'
   /api/v1/admin/vocabularies/import:
     $ref: './features/vocabulary/paths/AdminVocabularyImport.yaml'
   /api/v1/admin/vocabularies/{vocabularyId}:

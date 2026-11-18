@@ -1293,6 +1293,192 @@ To perform this operation, you must be authenticated by means of one of the foll
 bearerAuth
 </aside>
 
+## exportAdminStatistics
+
+<a id="opIdexportAdminStatistics"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X GET http://localhost:8080/api/v1/admin/statistics/export \
+  -H 'Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+GET http://localhost:8080/api/v1/admin/statistics/export HTTP/1.1
+Host: localhost:8080
+Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/statistics/export',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.get 'http://localhost:8080/api/v1/admin/statistics/export',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.get('http://localhost:8080/api/v1/admin/statistics/export', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('GET','http://localhost:8080/api/v1/admin/statistics/export', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/statistics/export");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("GET", "http://localhost:8080/api/v1/admin/statistics/export", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`GET /api/v1/admin/statistics/export`
+
+*Выгрузка статистики пользователей в xls*
+
+> Example responses
+
+> 200 Response
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+<h3 id="exportadminstatistics-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Файл xlsx со статистикой (скачивание).|string|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
 <h1 id="t-learn-api-vocabulary">vocabulary</h1>
 
 Словари для обучения и их администрирование
