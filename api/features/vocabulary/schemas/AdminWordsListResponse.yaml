@@ -10,7 +10,7 @@ properties:
     type: array
     description: Слова текущей страницы; пустой массив, если страница за пределами диапазона
     items:
-      $ref: './Word.yaml'
+      $ref: '../../../shared/schemas/Word.yaml'
   total:
     type: integer
     format: int32

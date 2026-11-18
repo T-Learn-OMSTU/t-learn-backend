@@ -92,7 +92,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../schemas/Word.yaml'
+            $ref: '../../../shared/schemas/Word.yaml'
     '400':
       $ref: '../../../shared/responses/BadRequest.yaml'
     '401':

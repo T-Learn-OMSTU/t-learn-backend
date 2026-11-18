@@ -32,5 +32,4 @@ properties:
     - VERB
     - PRONOUN
     - ADVERB
-    example:
-      NOUN
+    example: NOUN
