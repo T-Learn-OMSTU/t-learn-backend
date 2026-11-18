@@ -1,0 +1,24 @@
+post:
+  tags:
+    - learning
+  operationId: resetLearningVocabularyProgress
+  summary: Сброс прогресса по словарю
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Словарь, по которому сбрасывается прогресс.
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Прогресс по словарю сброшен.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ResetProgressResponse.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'

@@ -1,0 +1,31 @@
+type: object
+description: Актуальное состояние прогресса по слову после обработки ответа.
+required:
+  - id
+  - status
+  - stage
+  - dueAt
+properties:
+  id:
+    type: integer
+    format: int64
+    example: 12345
+  status:
+    type: string
+    enum:
+      - KNOWN
+      - IN_ROTATION
+      - LEARNED
+    example: IN_ROTATION
+  stage:
+    type: integer
+    format: int32
+    minimum: 0
+    maximum: 8
+    example: 4
+  dueAt:
+    type: string
+    format: date-time
+    nullable: true
+    description: Когда карточка дозреет к показу. null для KNOWN, LEARNED.
+    example: '2026-11-19T10:30:00Z'

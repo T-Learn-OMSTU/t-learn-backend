@@ -1,0 +1,14 @@
+post:
+  tags:
+    - learning
+  operationId: resetLearningAllProgress
+  summary: Сброс всего прогресса обучения
+  responses:
+    '200':
+      description: Весь прогресс обучения сброшен.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ResetProgressResponse.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'

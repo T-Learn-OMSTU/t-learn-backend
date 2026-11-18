@@ -17,6 +17,8 @@ tags:
     description: Эндпоинты панели администратора
   - name: vocabulary
     description: Словари для обучения и их администрирование
+  - name: learning
+    description: Обучение по карточкам и прогресс повторений
 paths:
   /api/v1/auth/send:
     post:
@@ -628,6 +630,113 @@ paths:
                   value:
                     code: VOCABULARY_WORD_NOT_FOUND
                     message: Слово не найдено
+  /api/v1/learning/cards/next:
+    get:
+      tags:
+        - learning
+      operationId: getLearningNextCard
+      summary: Следующая карточка обучения
+      responses:
+        '200':
+          description: Следующая карточка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '204':
+          description: Нет карточек для показа (всё выучено, ротация не дозрела или словарь пуст).
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/learning/words/{wordId}/answer:
+    post:
+      tags:
+        - learning
+      operationId: answerLearningWord
+      summary: Ответ на карточку
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Слово, по которому отправляется ответ (из карточки).
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerRequest'
+      responses:
+        '200':
+          description: Ответ принят, актуальное состояние прогресса по слову.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Действие не соответствует текущему состоянию слова на сервере.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                actionNotAllowed:
+                  summary: Экшн не подходит типу карточки
+                  value:
+                    code: LEARNING_ACTION_NOT_ALLOWED
+                    message: Действие недопустимо для текущего состояния слова
+                stageConflict:
+                  summary: Этап на сервере не совпал с expectedStage (ответ из другой вкладки)
+                  value:
+                    code: LEARNING_STAGE_CONFLICT
+                    message: Состояние слова изменилось, запросите карточку заново
+  /api/v1/learning/progress/vocabularies/{vocabularyId}/reset:
+    post:
+      tags:
+        - learning
+      operationId: resetLearningVocabularyProgress
+      summary: Сброс прогресса по словарю
+      parameters:
+        - name: vocabularyId
+          in: path
+          required: true
+          description: Словарь, по которому сбрасывается прогресс.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Прогресс по словарю сброшен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetProgressResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/learning/progress/reset-all:
+    post:
+      tags:
+        - learning
+      operationId: resetLearningAllProgress
+      summary: Сброс всего прогресса обучения
+      responses:
+        '200':
+          description: Весь прогресс обучения сброшен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetProgressResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 components:
   securitySchemes:
     bearerAuth:
@@ -959,6 +1068,137 @@ components:
             - PRONOUN
             - ADVERB
           example: NOUN
+    NewCard:
+      type: object
+      required:
+        - cardType
+        - direction
+        - word
+      properties:
+        cardType:
+          type: string
+          enum:
+            - NEW
+        direction:
+          type: string
+          enum:
+            - EN_RU
+        word:
+          $ref: '#/components/schemas/Word'
+    RotationCard:
+      type: object
+      required:
+        - cardType
+        - direction
+        - word
+        - stage
+        - totalStages
+        - penaltyStep
+      properties:
+        cardType:
+          type: string
+          enum:
+            - ROTATION
+        direction:
+          type: string
+          enum:
+            - EN_RU
+            - RU_EN
+          description: Направление перевода, выбирается сервером случайно при каждом показе
+        word:
+          $ref: '#/components/schemas/Word'
+        stage:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 8
+          description: Текущий этап повторения (отображается в углу карточки)
+          example: 3
+        totalStages:
+          type: integer
+          format: int32
+          description: Всего этапов повторения до статуса «выучено»
+          example: 8
+        penaltyStep:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+          description: Шаг штрафного повторения после «не запомнил» (0 — не в штрафе, 1 — повтор через 5 минут, 2 — через 1 час)
+          example: 0
+    Card:
+      oneOf:
+        - $ref: '#/components/schemas/NewCard'
+        - $ref: '#/components/schemas/RotationCard'
+      discriminator:
+        propertyName: cardType
+        mapping:
+          NEW: '#/components/schemas/NewCard'
+          ROTATION: '#/components/schemas/RotationCard'
+    AnswerRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - KNOW
+            - UNKNOWN
+            - REMEMBERED
+            - FORGOT
+          example: REMEMBERED
+        expectedStage:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 8
+          example: 3
+    AnswerResponse:
+      type: object
+      description: Актуальное состояние прогресса по слову после обработки ответа.
+      required:
+        - id
+        - status
+        - stage
+        - dueAt
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 12345
+        status:
+          type: string
+          enum:
+            - KNOWN
+            - IN_ROTATION
+            - LEARNED
+          example: IN_ROTATION
+        stage:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 8
+          example: 4
+        dueAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Когда карточка дозреет к показу. null для KNOWN, LEARNED.
+          example: '2026-11-19T10:30:00Z'
+    ResetProgressResponse:
+      type: object
+      required:
+        - resetCount
+      properties:
+        resetCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Количество удалённых записей прогресса. 0 — прогресса не было
+          example: 52
   responses:
     BadRequest:
       description: Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)

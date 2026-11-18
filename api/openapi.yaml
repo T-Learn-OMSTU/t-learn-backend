@@ -15,6 +15,8 @@ tags:
     description: Эндпоинты панели администратора
   - name: vocabulary
     description: Словари для обучения и их администрирование
+  - name: learning
+    description: Обучение по карточкам и прогресс повторений
 paths:
   /api/v1/auth/send:
     $ref: './features/auth/paths/SendOtp.yaml'
@@ -38,6 +40,14 @@ paths:
     $ref: './features/vocabulary/paths/AdminVocabularyWord.yaml'
   /api/v1/admin/words/{wordId}:
     $ref: './features/vocabulary/paths/AdminWord.yaml'
+  /api/v1/learning/cards/next:
+    $ref: './features/learning/paths/LearningCardNext.yaml'
+  /api/v1/learning/words/{wordId}/answer:
+    $ref: './features/learning/paths/LearningWordAnswer.yaml'
+  /api/v1/learning/progress/vocabularies/{vocabularyId}/reset:
+    $ref: './features/learning/paths/LearningProgressVocabularyReset.yaml'
+  /api/v1/learning/progress/reset-all:
+    $ref: './features/learning/paths/LearningProgressResetAll.yaml'
 components:
   securitySchemes:
     bearerAuth:

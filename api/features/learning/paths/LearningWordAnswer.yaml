@@ -1,0 +1,49 @@
+post:
+  tags:
+    - learning
+  operationId: answerLearningWord
+  summary: Ответ на карточку
+  parameters:
+    - name: wordId
+      in: path
+      required: true
+      description: Слово, по которому отправляется ответ (из карточки).
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/AnswerRequest.yaml'
+  responses:
+    '200':
+      description: Ответ принят, актуальное состояние прогресса по слову.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AnswerResponse.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'
+    '409':
+      description: Действие не соответствует текущему состоянию слова на сервере.
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            actionNotAllowed:
+              summary: Экшн не подходит типу карточки
+              value:
+                code: LEARNING_ACTION_NOT_ALLOWED
+                message: Действие недопустимо для текущего состояния слова
+            stageConflict:
+              summary: Этап на сервере не совпал с expectedStage (ответ из другой вкладки)
+              value:
+                code: LEARNING_STAGE_CONFLICT
+                message: Состояние слова изменилось, запросите карточку заново

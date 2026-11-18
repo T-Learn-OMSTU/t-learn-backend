@@ -1057,10 +1057,6 @@ To perform this operation, you must be authenticated by means of one of the foll
 bearerAuth
 </aside>
 
-<h1 id="t-learn-api-admin">admin</h1>
-
-Эндпоинты панели администратора
-
 ## getAdminUserStatistics
 
 <a id="opIdgetAdminUserStatistics"></a>
@@ -1264,6 +1260,15 @@ func main() {
 }
 ```
 
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
 > 404 Response
 
 ```json
@@ -1280,7 +1285,2658 @@ func main() {
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Вся статистика пользователя|[AdminUserStatisticsResponse](#schemaadminuserstatisticsresponse)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Некорректный период|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Ресурс не найден|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+<h1 id="t-learn-api-vocabulary">vocabulary</h1>
+
+Словари для обучения и их администрирование
+
+## importAdminVocabulary
+
+<a id="opIdimportAdminVocabulary"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST http://localhost:8080/api/v1/admin/vocabularies/import \
+  -H 'Content-Type: multipart/form-data' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+POST http://localhost:8080/api/v1/admin/vocabularies/import HTTP/1.1
+Host: localhost:8080
+Content-Type: multipart/form-data
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = '{
+  "name": "Базовый английский",
+  "file": "string"
+}';
+const headers = {
+  'Content-Type':'multipart/form-data',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/import',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'multipart/form-data',
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.post 'http://localhost:8080/api/v1/admin/vocabularies/import',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'multipart/form-data',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.post('http://localhost:8080/api/v1/admin/vocabularies/import', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'multipart/form-data',
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','http://localhost:8080/api/v1/admin/vocabularies/import', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/import");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"multipart/form-data"},
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/admin/vocabularies/import", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /api/v1/admin/vocabularies/import`
+
+*Импорт словаря из xls*
+
+> Body parameter
+
+```yaml
+name: Базовый английский
+file: string
+
+```
+
+<h3 id="importadminvocabulary-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» name|body|string|true|Название создаваемого словаря|
+|» file|body|string(binary)|true|xlsx-файл со словами|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "id": 1,
+  "name": "Базовый английский",
+  "wordsCount": 1500
+}
+```
+
+> Ошибка валидации запроса или файла импорта
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+```json
+{
+  "code": "VOCABULARY_IMPORT_INVALID",
+  "message": "Строка 17: пустое значение в колонке word"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+<h3 id="importadminvocabulary-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Словарь создан и наполнен словами из файла|[VocabularySummary](#schemavocabularysummary)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса или файла импорта|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## updateAdminVocabulary
+
+<a id="opIdupdateAdminVocabulary"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X PATCH http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId} \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+PATCH http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId} HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = '{
+  "name": "Базовый английский"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.patch 'http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.patch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('PATCH','http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("PATCH");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"application/json"},
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("PATCH", "http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`PATCH /api/v1/admin/vocabularies/{vocabularyId}`
+
+*Переименование словаря*
+
+> Body parameter
+
+```json
+{
+  "name": "Базовый английский"
+}
+```
+
+<h3 id="updateadminvocabulary-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Идентификатор словаря|
+|body|body|[AdminUpdateVocabularyRequest](#schemaadminupdatevocabularyrequest)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": 1,
+  "name": "Базовый английский",
+  "wordsCount": 1500
+}
+```
+
+> 400 Response
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Словарь с указанным vocabularyId не существует
+
+```json
+{
+  "code": "VOCABULARY_NOT_FOUND",
+  "message": "Словарь не найден"
+}
+```
+
+<h3 id="updateadminvocabulary-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Словарь переименован; возвращается актуальное состояние|[VocabularySummary](#schemavocabularysummary)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Словарь с указанным vocabularyId не существует|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## deleteAdminVocabulary
+
+<a id="opIddeleteAdminVocabulary"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X DELETE http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId} \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+DELETE http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId} HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.delete 'http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.delete('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('DELETE','http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("DELETE");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("DELETE", "http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`DELETE /api/v1/admin/vocabularies/{vocabularyId}`
+
+*Удаление словаря*
+
+<h3 id="deleteadminvocabulary-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Идентификатор удаляемого словаря|
+
+> Example responses
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Словарь с указанным vocabularyId не существует
+
+```json
+{
+  "code": "VOCABULARY_NOT_FOUND",
+  "message": "Словарь не найден"
+}
+```
+
+<h3 id="deleteadminvocabulary-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Словарь удалён|None|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Словарь с указанным vocabularyId не существует|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## exportAdminVocabulary
+
+<a id="opIdexportAdminVocabulary"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X GET http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export \
+  -H 'Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+GET http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export HTTP/1.1
+Host: localhost:8080
+Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.get 'http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.get('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('GET','http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("GET", "http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/export", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`GET /api/v1/admin/vocabularies/{vocabularyId}/export`
+
+*Выгрузка словаря в xls*
+
+<h3 id="exportadminvocabulary-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Идентификатор выгружаемого словаря|
+
+> Example responses
+
+> 200 Response
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Словарь с указанным vocabularyId не существует
+
+```json
+{
+  "code": "VOCABULARY_NOT_FOUND",
+  "message": "Словарь не найден"
+}
+```
+
+<h3 id="exportadminvocabulary-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|xlsx-файл со словами словаря|string|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Словарь с указанным vocabularyId не существует|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## getAdminVocabularyWords
+
+<a id="opIdgetAdminVocabularyWords"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X GET http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+GET http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.get 'http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.get('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('GET','http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("GET", "http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`GET /api/v1/admin/vocabularies/{vocabularyId}/words`
+
+*Слова словаря*
+
+Возвращает постраничный список слов словаря для редактирования в админке.
+
+<h3 id="getadminvocabularywords-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Идентификатор словаря|
+|page|query|integer(int32)|false|Номер страницы, нумерация с 1|
+|size|query|integer(int32)|false|Размер страницы; больше 100 записей за раз запросить нельзя|
+|search|query|string|false|Подстрока для поиска по word или translation, без учёта регистра|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "items": [
+    {
+      "id": 67,
+      "word": "feel",
+      "transcription": "fil",
+      "translation": "чувствовать",
+      "type": "NOUN"
+    }
+  ],
+  "total": 1500,
+  "page": 1,
+  "size": 50
+}
+```
+
+> 400 Response
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Словарь с указанным vocabularyId не существует
+
+```json
+{
+  "code": "VOCABULARY_NOT_FOUND",
+  "message": "Словарь не найден"
+}
+```
+
+<h3 id="getadminvocabularywords-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Страница списка слов|[AdminWordsListResponse](#schemaadminwordslistresponse)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Словарь с указанным vocabularyId не существует|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## createAdminVocabularyWord
+
+<a id="opIdcreateAdminVocabularyWord"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+POST http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = '{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.post 'http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.post('http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"application/json"},
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/admin/vocabularies/{vocabularyId}/words", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /api/v1/admin/vocabularies/{vocabularyId}/words`
+
+*Добавление слова в словарь*
+
+> Body parameter
+
+```json
+{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+```
+
+<h3 id="createadminvocabularyword-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Идентификатор словаря, в который добавляется слово|
+|body|body|[AdminCreateWordRequest](#schemaadmincreatewordrequest)|true|none|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "id": 67,
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+```
+
+> 400 Response
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Словарь с указанным vocabularyId не существует
+
+```json
+{
+  "code": "VOCABULARY_NOT_FOUND",
+  "message": "Словарь не найден"
+}
+```
+
+> Слово с таким написанием уже есть в этом словаре
+
+```json
+{
+  "code": "VOCABULARY_WORD_DUPLICATE",
+  "message": "Слово уже есть в словаре"
+}
+```
+
+<h3 id="createadminvocabularyword-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Слово добавлено|[Word](#schemaword)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Словарь с указанным vocabularyId не существует|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Слово с таким написанием уже есть в этом словаре|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## updateAdminWord
+
+<a id="opIdupdateAdminWord"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X PATCH http://localhost:8080/api/v1/admin/words/{wordId} \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+PATCH http://localhost:8080/api/v1/admin/words/{wordId} HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = '{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/words/{wordId}',
+{
+  method: 'PATCH',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.patch 'http://localhost:8080/api/v1/admin/words/{wordId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.patch('http://localhost:8080/api/v1/admin/words/{wordId}', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('PATCH','http://localhost:8080/api/v1/admin/words/{wordId}', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/words/{wordId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("PATCH");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"application/json"},
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("PATCH", "http://localhost:8080/api/v1/admin/words/{wordId}", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`PATCH /api/v1/admin/words/{wordId}`
+
+*Редактирование слова*
+
+> Body parameter
+
+```json
+{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+```
+
+<h3 id="updateadminword-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|wordId|path|integer(int64)|true|Идентификатор слова|
+|body|body|[AdminUpdateWordRequest](#schemaadminupdatewordrequest)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": 67,
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+```
+
+> 400 Response
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Слово с указанным wordId не существует
+
+```json
+{
+  "code": "VOCABULARY_WORD_NOT_FOUND",
+  "message": "Слово не найдено"
+}
+```
+
+> Слово с таким написанием уже есть в этом словаре
+
+```json
+{
+  "code": "VOCABULARY_WORD_DUPLICATE",
+  "message": "Слово уже есть в словаре"
+}
+```
+
+<h3 id="updateadminword-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Слово обновлено; возвращается актуальное состояние|[Word](#schemaword)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Слово с указанным wordId не существует|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Слово с таким написанием уже есть в этом словаре|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## deleteAdminWord
+
+<a id="opIddeleteAdminWord"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X DELETE http://localhost:8080/api/v1/admin/words/{wordId} \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+DELETE http://localhost:8080/api/v1/admin/words/{wordId} HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/admin/words/{wordId}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.delete 'http://localhost:8080/api/v1/admin/words/{wordId}',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.delete('http://localhost:8080/api/v1/admin/words/{wordId}', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('DELETE','http://localhost:8080/api/v1/admin/words/{wordId}', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/admin/words/{wordId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("DELETE");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("DELETE", "http://localhost:8080/api/v1/admin/words/{wordId}", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`DELETE /api/v1/admin/words/{wordId}`
+
+*Удаление слова*
+
+<h3 id="deleteadminword-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|wordId|path|integer(int64)|true|Идентификатор удаляемого слова|
+
+> Example responses
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 403 Response
+
+```json
+{
+  "code": "FORBIDDEN",
+  "message": "Недостаточно прав для выполнения операции"
+}
+```
+
+> Слово с указанным wordId не существует
+
+```json
+{
+  "code": "VOCABULARY_WORD_NOT_FOUND",
+  "message": "Слово не найдено"
+}
+```
+
+<h3 id="deleteadminword-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Слово удалено|None|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Доступ запрещён (недостаточно прав)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Слово с указанным wordId не существует|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+<h1 id="t-learn-api-learning">learning</h1>
+
+Обучение по карточкам и прогресс повторений
+
+## getLearningNextCard
+
+<a id="opIdgetLearningNextCard"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X GET http://localhost:8080/api/v1/learning/cards/next \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+GET http://localhost:8080/api/v1/learning/cards/next HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/learning/cards/next',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.get 'http://localhost:8080/api/v1/learning/cards/next',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.get('http://localhost:8080/api/v1/learning/cards/next', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('GET','http://localhost:8080/api/v1/learning/cards/next', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/learning/cards/next");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("GET", "http://localhost:8080/api/v1/learning/cards/next", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`GET /api/v1/learning/cards/next`
+
+*Следующая карточка обучения*
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "cardType": "NEW",
+  "direction": "EN_RU",
+  "word": {
+    "id": 67,
+    "word": "feel",
+    "transcription": "fil",
+    "translation": "чувствовать",
+    "type": "NOUN"
+  }
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+<h3 id="getlearningnextcard-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Следующая карточка.|[Card](#schemacard)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Нет карточек для показа (всё выучено, ротация не дозрела или словарь пуст).|None|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## answerLearningWord
+
+<a id="opIdanswerLearningWord"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST http://localhost:8080/api/v1/learning/words/{wordId}/answer \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+POST http://localhost:8080/api/v1/learning/words/{wordId}/answer HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Accept: application/json
+
+```
+
+```javascript
+const inputBody = '{
+  "action": "REMEMBERED",
+  "expectedStage": 3
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/learning/words/{wordId}/answer',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Content-Type' => 'application/json',
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.post 'http://localhost:8080/api/v1/learning/words/{wordId}/answer',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.post('http://localhost:8080/api/v1/learning/words/{wordId}/answer', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','http://localhost:8080/api/v1/learning/words/{wordId}/answer', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/learning/words/{wordId}/answer");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Content-Type": []string{"application/json"},
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/learning/words/{wordId}/answer", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /api/v1/learning/words/{wordId}/answer`
+
+*Ответ на карточку*
+
+> Body parameter
+
+```json
+{
+  "action": "REMEMBERED",
+  "expectedStage": 3
+}
+```
+
+<h3 id="answerlearningword-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|wordId|path|integer(int64)|true|Слово, по которому отправляется ответ (из карточки).|
+|body|body|[AnswerRequest](#schemaanswerrequest)|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": 12345,
+  "status": "IN_ROTATION",
+  "stage": 4,
+  "dueAt": "2026-11-19T10:30:00Z"
+}
+```
+
+> 400 Response
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Некорректное значение поля"
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 404 Response
+
+```json
+{
+  "code": "NOT_FOUND",
+  "message": "Ресурс не найден"
+}
+```
+
+> Действие не соответствует текущему состоянию слова на сервере.
+
+```json
+{
+  "code": "LEARNING_ACTION_NOT_ALLOWED",
+  "message": "Действие недопустимо для текущего состояния слова"
+}
+```
+
+```json
+{
+  "code": "LEARNING_STAGE_CONFLICT",
+  "message": "Состояние слова изменилось, запросите карточку заново"
+}
+```
+
+<h3 id="answerlearningword-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Ответ принят, актуальное состояние прогресса по слову.|[AnswerResponse](#schemaanswerresponse)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Ресурс не найден|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Действие не соответствует текущему состоянию слова на сервере.|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## resetLearningVocabularyProgress
+
+<a id="opIdresetLearningVocabularyProgress"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+POST http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.post 'http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.post('http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/learning/progress/vocabularies/{vocabularyId}/reset", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /api/v1/learning/progress/vocabularies/{vocabularyId}/reset`
+
+*Сброс прогресса по словарю*
+
+<h3 id="resetlearningvocabularyprogress-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|vocabularyId|path|integer(int64)|true|Словарь, по которому сбрасывается прогресс.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "resetCount": 52
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+> 404 Response
+
+```json
+{
+  "code": "NOT_FOUND",
+  "message": "Ресурс не найден"
+}
+```
+
+<h3 id="resetlearningvocabularyprogress-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Прогресс по словарю сброшен.|[ResetProgressResponse](#schemaresetprogressresponse)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Ресурс не найден|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+bearerAuth
+</aside>
+
+## resetLearningAllProgress
+
+<a id="opIdresetLearningAllProgress"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST http://localhost:8080/api/v1/learning/progress/reset-all \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer {access-token}'
+
+```
+
+```http
+POST http://localhost:8080/api/v1/learning/progress/reset-all HTTP/1.1
+Host: localhost:8080
+Accept: application/json
+
+```
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('http://localhost:8080/api/v1/learning/progress/reset-all',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```ruby
+require 'rest-client'
+require 'json'
+
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => 'Bearer {access-token}'
+}
+
+result = RestClient.post 'http://localhost:8080/api/v1/learning/progress/reset-all',
+  params: {
+  }, headers: headers
+
+p JSON.parse(result)
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'Bearer {access-token}'
+}
+
+r = requests.post('http://localhost:8080/api/v1/learning/progress/reset-all', headers = headers)
+
+print(r.json())
+
+```
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+$headers = array(
+    'Accept' => 'application/json',
+    'Authorization' => 'Bearer {access-token}',
+);
+
+$client = new \GuzzleHttp\Client();
+
+// Define array of request body.
+$request_body = array();
+
+try {
+    $response = $client->request('POST','http://localhost:8080/api/v1/learning/progress/reset-all', array(
+        'headers' => $headers,
+        'json' => $request_body,
+       )
+    );
+    print_r($response->getBody()->getContents());
+ }
+ catch (\GuzzleHttp\Exception\BadResponseException $e) {
+    // handle exception or api errors.
+    print_r($e->getMessage());
+ }
+
+ // ...
+
+```
+
+```java
+URL obj = new URL("http://localhost:8080/api/v1/learning/progress/reset-all");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+```go
+package main
+
+import (
+       "bytes"
+       "net/http"
+)
+
+func main() {
+
+    headers := map[string][]string{
+        "Accept": []string{"application/json"},
+        "Authorization": []string{"Bearer {access-token}"},
+    }
+
+    data := bytes.NewBuffer([]byte{jsonReq})
+    req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/learning/progress/reset-all", data)
+    req.Header = headers
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    // ...
+}
+
+```
+
+`POST /api/v1/learning/progress/reset-all`
+
+*Сброс всего прогресса обучения*
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "resetCount": 52
+}
+```
+
+> 401 Response
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Требуется авторизация"
+}
+```
+
+<h3 id="resetlearningallprogress-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Весь прогресс обучения сброшен.|[ResetProgressResponse](#schemaresetprogressresponse)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Не авторизован (токен отсутствует или недействителен)|[Error](#schemaerror)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1509,4 +4165,411 @@ and
 |---|---|---|---|---|
 |» *anonymous*|object|false|none|none|
 |»» vocabularyId|integer(int64)|true|none|none|
+
+<h2 id="tocS_VocabularySummary">VocabularySummary</h2>
+<!-- backwards compatibility -->
+<a id="schemavocabularysummary"></a>
+<a id="schema_VocabularySummary"></a>
+<a id="tocSvocabularysummary"></a>
+<a id="tocsvocabularysummary"></a>
+
+```json
+{
+  "id": 1,
+  "name": "Базовый английский",
+  "wordsCount": 1500
+}
+
+```
+
+Словарь в каталоге - набор слов для обучения
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|integer(int64)|true|none|Идентификатор словаря|
+|name|string|true|none|Название словаря, отображается пользователю при выборе|
+|wordsCount|integer(int32)|true|none|Количество слов в словаре|
+
+<h2 id="tocS_AdminUpdateVocabularyRequest">AdminUpdateVocabularyRequest</h2>
+<!-- backwards compatibility -->
+<a id="schemaadminupdatevocabularyrequest"></a>
+<a id="schema_AdminUpdateVocabularyRequest"></a>
+<a id="tocSadminupdatevocabularyrequest"></a>
+<a id="tocsadminupdatevocabularyrequest"></a>
+
+```json
+{
+  "name": "Базовый английский"
+}
+
+```
+
+Изменения словаря
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Новое название словаря, отображается пользователю при выборе|
+
+<h2 id="tocS_Word">Word</h2>
+<!-- backwards compatibility -->
+<a id="schemaword"></a>
+<a id="schema_Word"></a>
+<a id="tocSword"></a>
+<a id="tocsword"></a>
+
+```json
+{
+  "id": 67,
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+
+```
+
+Слово словаря
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|integer(int64)|true|none|Идентификатор слова|
+|word|string|true|none|Английское написание слова|
+|transcription|string|true|none|Транскрипция английского слова|
+|translation|string|true|none|Перевод на русский|
+|type|string|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|NOUN|
+|type|ADJECTIVE|
+|type|VERB|
+|type|PRONOUN|
+|type|ADVERB|
+
+<h2 id="tocS_AdminWordsListResponse">AdminWordsListResponse</h2>
+<!-- backwards compatibility -->
+<a id="schemaadminwordslistresponse"></a>
+<a id="schema_AdminWordsListResponse"></a>
+<a id="tocSadminwordslistresponse"></a>
+<a id="tocsadminwordslistresponse"></a>
+
+```json
+{
+  "items": [
+    {
+      "id": 67,
+      "word": "feel",
+      "transcription": "fil",
+      "translation": "чувствовать",
+      "type": "NOUN"
+    }
+  ],
+  "total": 1500,
+  "page": 1,
+  "size": 50
+}
+
+```
+
+Страница списка слов словаря
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|items|[[Word](#schemaword)]|true|none|Слова текущей страницы; пустой массив, если страница за пределами диапазона|
+|total|integer(int32)|true|none|Общее число слов в словаре с учётом фильтра search; фронту нужно для отрисовки|
+|page|integer(int32)|true|none|Номер возвращённой страницы|
+|size|integer(int32)|true|none|Размер страницы|
+
+<h2 id="tocS_AdminCreateWordRequest">AdminCreateWordRequest</h2>
+<!-- backwards compatibility -->
+<a id="schemaadmincreatewordrequest"></a>
+<a id="schema_AdminCreateWordRequest"></a>
+<a id="tocSadmincreatewordrequest"></a>
+<a id="tocsadmincreatewordrequest"></a>
+
+```json
+{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+
+```
+
+Слово словаря (без id для создания в словаре)
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|word|string|true|none|Английское написание слова|
+|transcription|string|true|none|Транскрипция английского слова|
+|translation|string|true|none|Перевод на русский|
+|type|string|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|NOUN|
+|type|ADJECTIVE|
+|type|VERB|
+|type|PRONOUN|
+|type|ADVERB|
+
+<h2 id="tocS_AdminUpdateWordRequest">AdminUpdateWordRequest</h2>
+<!-- backwards compatibility -->
+<a id="schemaadminupdatewordrequest"></a>
+<a id="schema_AdminUpdateWordRequest"></a>
+<a id="tocSadminupdatewordrequest"></a>
+<a id="tocsadminupdatewordrequest"></a>
+
+```json
+{
+  "word": "feel",
+  "transcription": "fil",
+  "translation": "чувствовать",
+  "type": "NOUN"
+}
+
+```
+
+Изменения слова; передаются только изменяемые поля, минимум одно
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|word|string|false|none|Английское написание слова|
+|transcription|string|false|none|Транскрипция английского слова|
+|translation|string|false|none|Перевод на русский|
+|type|string|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|NOUN|
+|type|ADJECTIVE|
+|type|VERB|
+|type|PRONOUN|
+|type|ADVERB|
+
+<h2 id="tocS_NewCard">NewCard</h2>
+<!-- backwards compatibility -->
+<a id="schemanewcard"></a>
+<a id="schema_NewCard"></a>
+<a id="tocSnewcard"></a>
+<a id="tocsnewcard"></a>
+
+```json
+{
+  "cardType": "NEW",
+  "direction": "EN_RU",
+  "word": {
+    "id": 67,
+    "word": "feel",
+    "transcription": "fil",
+    "translation": "чувствовать",
+    "type": "NOUN"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|cardType|string|true|none|none|
+|direction|string|true|none|none|
+|word|[Word](#schemaword)|true|none|Слово словаря|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|cardType|NEW|
+|direction|EN_RU|
+
+<h2 id="tocS_RotationCard">RotationCard</h2>
+<!-- backwards compatibility -->
+<a id="schemarotationcard"></a>
+<a id="schema_RotationCard"></a>
+<a id="tocSrotationcard"></a>
+<a id="tocsrotationcard"></a>
+
+```json
+{
+  "cardType": "ROTATION",
+  "direction": "EN_RU",
+  "word": {
+    "id": 67,
+    "word": "feel",
+    "transcription": "fil",
+    "translation": "чувствовать",
+    "type": "NOUN"
+  },
+  "stage": 3,
+  "totalStages": 8,
+  "penaltyStep": 0
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|cardType|string|true|none|none|
+|direction|string|true|none|Направление перевода, выбирается сервером случайно при каждом показе|
+|word|[Word](#schemaword)|true|none|Слово словаря|
+|stage|integer(int32)|true|none|Текущий этап повторения (отображается в углу карточки)|
+|totalStages|integer(int32)|true|none|Всего этапов повторения до статуса «выучено»|
+|penaltyStep|integer(int32)|true|none|Шаг штрафного повторения после «не запомнил» (0 — не в штрафе, 1 — повтор через 5 минут, 2 — через 1 час)|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|cardType|ROTATION|
+|direction|EN_RU|
+|direction|RU_EN|
+|penaltyStep|0|
+|penaltyStep|1|
+|penaltyStep|2|
+
+<h2 id="tocS_Card">Card</h2>
+<!-- backwards compatibility -->
+<a id="schemacard"></a>
+<a id="schema_Card"></a>
+<a id="tocScard"></a>
+<a id="tocscard"></a>
+
+```json
+{
+  "cardType": "NEW",
+  "direction": "EN_RU",
+  "word": {
+    "id": 67,
+    "word": "feel",
+    "transcription": "fil",
+    "translation": "чувствовать",
+    "type": "NOUN"
+  }
+}
+
+```
+
+### Properties
+
+oneOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[NewCard](#schemanewcard)|false|none|none|
+
+xor
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[RotationCard](#schemarotationcard)|false|none|none|
+
+<h2 id="tocS_AnswerRequest">AnswerRequest</h2>
+<!-- backwards compatibility -->
+<a id="schemaanswerrequest"></a>
+<a id="schema_AnswerRequest"></a>
+<a id="tocSanswerrequest"></a>
+<a id="tocsanswerrequest"></a>
+
+```json
+{
+  "action": "REMEMBERED",
+  "expectedStage": 3
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|action|string|true|none|none|
+|expectedStage|integer(int32)|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|action|KNOW|
+|action|UNKNOWN|
+|action|REMEMBERED|
+|action|FORGOT|
+
+<h2 id="tocS_AnswerResponse">AnswerResponse</h2>
+<!-- backwards compatibility -->
+<a id="schemaanswerresponse"></a>
+<a id="schema_AnswerResponse"></a>
+<a id="tocSanswerresponse"></a>
+<a id="tocsanswerresponse"></a>
+
+```json
+{
+  "id": 12345,
+  "status": "IN_ROTATION",
+  "stage": 4,
+  "dueAt": "2026-11-19T10:30:00Z"
+}
+
+```
+
+Актуальное состояние прогресса по слову после обработки ответа.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|integer(int64)|true|none|none|
+|status|string|true|none|none|
+|stage|integer(int32)|true|none|none|
+|dueAt|string(date-time)¦null|true|none|Когда карточка дозреет к показу. null для KNOWN, LEARNED.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|status|KNOWN|
+|status|IN_ROTATION|
+|status|LEARNED|
+
+<h2 id="tocS_ResetProgressResponse">ResetProgressResponse</h2>
+<!-- backwards compatibility -->
+<a id="schemaresetprogressresponse"></a>
+<a id="schema_ResetProgressResponse"></a>
+<a id="tocSresetprogressresponse"></a>
+<a id="tocsresetprogressresponse"></a>
+
+```json
+{
+  "resetCount": 52
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|resetCount|integer(int32)|true|none|Количество удалённых записей прогресса. 0 — прогресса не было|
 
