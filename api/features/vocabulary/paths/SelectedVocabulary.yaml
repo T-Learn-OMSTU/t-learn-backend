@@ -1,0 +1,38 @@
+get:
+  tags:
+    - vocabulary
+  summary: Выбранный словарь
+  operationId: getSelectedVocabulary
+  responses:
+    '200':
+      description: Идентификатор выбранного словаря
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/SelectedVocabulary.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+put:
+  tags:
+    - vocabulary
+  summary: Выбор словаря в настройках
+  operationId: updateMySelectedVocabulary
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/UpdateSelectedVocabularyRequest.yaml'
+  responses:
+    '200':
+      description: Выбор сохранён; возвращается актуальный выбранный словарь
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/SelectedVocabulary.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'

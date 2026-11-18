@@ -1,0 +1,17 @@
+get:
+  tags:
+    - statistics
+  operationId: exportAdminStatistics
+  summary: Выгрузка статистики пользователей в xls
+  responses:
+    '200':
+      description: Файл xlsx со статистикой (скачивание).
+      content:
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'

@@ -1,0 +1,16 @@
+get:
+  tags:
+    - learning
+  operationId: getLearningNextCard
+  summary: Следующая карточка обучения
+  responses:
+    '200':
+      description: Следующая карточка.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/Card.yaml'
+    '204':
+      description: Нет карточек для показа (всё выучено, ротация не дозрела или словарь пуст).
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'

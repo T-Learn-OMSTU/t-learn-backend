@@ -1,0 +1,8 @@
+description: Ошибка валидации запроса (невалидное значение поля, отсутствует обязательное поле, нарушен формат данных)
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    example:
+      code: VALIDATION_ERROR
+      message: "Некорректное значение поля"

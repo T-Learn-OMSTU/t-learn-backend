@@ -1,0 +1,35 @@
+type: object
+description: Слово словаря
+required:
+  - id
+  - word
+  - translation
+  - transcription
+  - type
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Идентификатор слова
+    example: 67
+  word:
+    type: string
+    description: Английское написание слова
+    example: "feel"
+  transcription:
+    type: string
+    description: Транскрипция английского слова
+    example: "fil"
+  translation:
+    type: string
+    description: Перевод на русский
+    example: "чувствовать"
+  type:
+    type: string
+    enum:
+    - NOUN
+    - ADJECTIVE
+    - VERB
+    - PRONOUN
+    - ADVERB
+    example: NOUN

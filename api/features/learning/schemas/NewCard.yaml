@@ -1,0 +1,16 @@
+type: object
+required:
+  - cardType
+  - direction
+  - word
+properties:
+  cardType:
+    type: string
+    enum:
+      - NEW
+  direction:
+    type: string
+    enum:
+      - EN_RU
+  word:
+    $ref: '../../../shared/schemas/Word.yaml'

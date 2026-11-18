@@ -1,0 +1,10 @@
+type: object
+description: Идентификатор нового словаря
+required:
+  - vocabularyId
+properties:
+  vocabularyId:
+    type: integer
+    format: int64
+    description: Идентификатор словаря, который станет активным для пользователя
+    example: 1

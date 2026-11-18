@@ -1,0 +1,31 @@
+type: object
+description: Страница списка слов словаря
+required:
+  - items
+  - total
+  - page
+  - size
+properties:
+  items:
+    type: array
+    description: Слова текущей страницы; пустой массив, если страница за пределами диапазона
+    items:
+      $ref: '../../../shared/schemas/Word.yaml'
+  total:
+    type: integer
+    format: int32
+    minimum: 0
+    description: Общее число слов в словаре с учётом фильтра search; фронту нужно для отрисовки
+    example: 1500
+  page:
+    type: integer
+    format: int32
+    minimum: 1
+    description: Номер возвращённой страницы
+    example: 1
+  size:
+    type: integer
+    format: int32
+    minimum: 1
+    description: Размер страницы
+    example: 50

@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: t-learn API
+  version: 0.0.1
+  description: Backend API сервиса t-learn
+servers:
+  - url: http://localhost:8080
+    description: Локальная разработка
+tags:
+  - name: auth
+    description: Авторизация по OTP-коду, выдача и инвалидация opaque токена
+  - name: statistics
+    description: Статистика обучения пользователя
+  - name: admin
+    description: Эндпоинты панели администратора
+  - name: vocabulary
+    description: Словари для обучения и их администрирование
+  - name: learning
+    description: Обучение по карточкам и прогресс повторений
+paths:
+  /api/v1/auth/send:
+    $ref: './features/auth/paths/SendOtp.yaml'
+  /api/v1/auth/verify:
+    $ref: './features/auth/paths/Verify.yaml'
+  /api/v1/auth/logout:
+    $ref: './features/auth/paths/Logout.yaml'
+  /api/v1/statistics/memorized-per-day:
+    $ref: './features/statistics/paths/MemorizedPerDay.yaml'
+  /api/v1/statistics/vocabularies/{vocabularyId}/progress:
+    $ref: './features/statistics/paths/VocabProgress.yaml'
+  /api/v1/admin/statistics/users/{userId}:
+    $ref: './features/statistics/paths/AdminUserStatistics.yaml'
+  /api/v1/admin/statistics/export:
+    $ref: './features/statistics/paths/AdminStatisticsExport.yaml'
+  /api/v1/admin/vocabularies/import:
+    $ref: './features/vocabulary/paths/AdminVocabularyImport.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}:
+    $ref: './features/vocabulary/paths/AdminVocabulary.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}/export:
+    $ref: './features/vocabulary/paths/AdminVocabularyExport.yaml'
+  /api/v1/admin/vocabularies/{vocabularyId}/words:
+    $ref: './features/vocabulary/paths/AdminVocabularyWord.yaml'
+  /api/v1/admin/words/{wordId}:
+    $ref: './features/vocabulary/paths/AdminWord.yaml'
+  /api/v1/learning/cards/next:
+    $ref: './features/learning/paths/LearningCardNext.yaml'
+  /api/v1/learning/words/{wordId}/answer:
+    $ref: './features/learning/paths/LearningWordAnswer.yaml'
+  /api/v1/learning/progress/vocabularies/{vocabularyId}/reset:
+    $ref: './features/learning/paths/LearningProgressVocabularyReset.yaml'
+  /api/v1/learning/progress/reset-all:
+    $ref: './features/learning/paths/LearningProgressResetAll.yaml'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque токен доступа, полученный на /api/v1/auth/verify
+security:
+  - bearerAuth: []
