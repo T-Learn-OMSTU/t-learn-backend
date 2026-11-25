@@ -7,11 +7,11 @@ import ru.tlearn.user.repository.UserRepository
 
 @Service
 class UserService(
-    private val userRespository: UserRepository,
+    private val userRepository: UserRepository,
 ) {
     fun findOrCreateByEmail(
         email: String,
         role: UserRole,
         vocab: Int,
-    ): User = userRespository.findOrCreateByEmail(email, role, vocab)
+    ): User = userRepository.findOrCreateByEmail(email, role, vocab)
 }
