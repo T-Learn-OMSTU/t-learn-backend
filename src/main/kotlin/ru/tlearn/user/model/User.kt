@@ -1,9 +1,7 @@
 package ru.tlearn.user.model
 
-import ru.tlearn.jooq.enums.UserRole
-
 class User(
-    val id: Long,
+    val id: Int,
     val email: String,
     var role: UserRole,
     var vocab: Int,

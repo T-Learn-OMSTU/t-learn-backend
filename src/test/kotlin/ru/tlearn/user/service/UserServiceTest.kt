@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
-import ru.tlearn.jooq.enums.UserRole
+import ru.tlearn.user.model.UserRole
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
