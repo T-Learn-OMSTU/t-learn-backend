@@ -1,6 +1,7 @@
 package ru.tlearn.user.service
 
 import org.springframework.stereotype.Service
+import ru.tlearn.user.UserComponent
 import ru.tlearn.user.model.UserRole
 import ru.tlearn.user.model.User
 import ru.tlearn.user.repository.UserRepository
