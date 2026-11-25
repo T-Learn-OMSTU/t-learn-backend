@@ -58,12 +58,23 @@ kotlin {
     }
 }
 
+ktlint {
+    filter {
+        exclude { element ->
+            element.file.path
+                .replace('\\', '/')
+                .contains("/generated-src/")
+        }
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val dbUrl = System.getenv("DB_URL")
-    ?: "jdbc:postgresql://localhost:${System.getenv("DB_PORT") ?: "5432"}/${System.getenv("DB_NAME") ?: "tlearn"}"
+val dbUrl =
+    System.getenv("DB_URL")
+        ?: "jdbc:postgresql://localhost:${System.getenv("DB_PORT") ?: "5432"}/${System.getenv("DB_NAME") ?: "tlearn"}"
 val dbUser = System.getenv("DB_USER") ?: "postgres"
 val dbPassword = System.getenv("DB_PASSWORD") ?: "postgres"
 
@@ -109,7 +120,7 @@ tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
 
     inputs.files(
-        fileTree("src/main/resources/db/migration")
+        fileTree("src/main/resources/db/migration"),
     )
 }
 
@@ -122,4 +133,8 @@ tasks.register("generateDatabase") {
 
 tasks.named("compileKotlin") {
     dependsOn("generateDatabase")
+}
+
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    dependsOn("jooqCodegen")
 }
