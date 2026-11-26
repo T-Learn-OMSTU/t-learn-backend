@@ -1,0 +1,50 @@
+patch:
+  tags:
+    - user
+  summary: Обновить роль пользователю
+  operationId: updateAdminUserRole
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Идентификатор пользователя, которому меняют роль
+      example: 42
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/AdminUserUpdateRoleRequest.yaml'
+  responses:
+    '200':
+      description: Роль изменена; возвращается актуальная карточка пользователя
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AdminUserSummary.yaml'
+    '400':
+      description: Ошибка валидации тела запроса или недопустимая смена роли
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            validationError:
+              summary: Невалидное тело запроса — роль отсутствует или не из списка
+              value:
+                code: VALIDATION_ERROR
+                message: Ошибка валидации запроса
+            selfRoleChange:
+              summary: Администратор пытается изменить роль самому себе
+              value:
+                code: USER_SELF_ROLE_CHANGE
+                message: Нельзя изменить роль самому себе
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml' 

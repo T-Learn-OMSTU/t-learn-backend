@@ -1,0 +1,11 @@
+type: object
+description: Выбранный словарь
+required:
+  - vocabularyId
+properties:
+  vocabularyId:
+    type: integer
+    format: int64
+    nullable: true
+    description: null — пользователь ещё не делал выбор
+    example: 1

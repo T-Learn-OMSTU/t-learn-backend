@@ -1,0 +1,42 @@
+type: object
+required:
+  - cardType
+  - direction
+  - word
+  - stage
+  - totalStages
+  - penaltyStep
+properties:
+  cardType:
+    type: string
+    enum:
+      - ROTATION
+  direction:
+    type: string
+    enum:
+      - EN_RU
+      - RU_EN
+    description: Направление перевода, выбирается сервером случайно при каждом показе
+  word:
+    $ref: '../../../shared/schemas/Word.yaml'
+  stage:
+    type: integer
+    format: int32
+    minimum: 1
+    maximum: 8
+    description: Текущий этап повторения (отображается в углу карточки)
+    example: 3
+  totalStages:
+    type: integer
+    format: int32
+    description: Всего этапов повторения до статуса «выучено»
+    example: 8
+  penaltyStep:
+    type: integer
+    format: int32
+    enum:
+      - 0
+      - 1
+      - 2
+    description: Шаг штрафного повторения после «не запомнил» (0 — не в штрафе, 1 — повтор через 5 минут, 2 — через 1 час)
+    example: 0

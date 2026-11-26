@@ -1,0 +1,30 @@
+get:
+  tags:
+    - user
+  summary: Данные о пользователе
+  description: Возвращает данные об одном пользователе
+  operationId: getAdminUserById
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Идентификатор пользователя
+      example: 42
+  responses:
+    '200':
+      description: Данные пользователя
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/AdminUserSummary.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      $ref: '../../../shared/responses/NotFound.yaml'  

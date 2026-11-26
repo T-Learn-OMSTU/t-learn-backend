@@ -1,0 +1,21 @@
+type: object
+required:
+  - accessToken
+  - tokenType
+  - expiresIn
+properties:
+  accessToken:
+    type: string
+    description: Opaque токен доступа, передается в заголовке Authorization
+    example: "9f2c1b7a4d6e8f0a3b5c7d9e1f2a4b6c"
+  tokenType:
+    type: string
+    description: Тип токена, всегда Bearer
+    enum:
+      - Bearer
+    example: "Bearer"
+  expiresIn:
+    type: integer
+    format: int32
+    description: Время жизни токена в секундах
+    example: 2592000

@@ -1,0 +1,18 @@
+type: object
+required:
+  - action
+properties:
+  action:
+    type: string
+    enum:
+      - KNOW
+      - UNKNOWN
+      - REMEMBERED
+      - FORGOT
+    example: REMEMBERED
+  expectedStage:
+    type: integer
+    format: int32
+    minimum: 1
+    maximum: 8
+    example: 3

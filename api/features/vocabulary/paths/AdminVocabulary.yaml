@@ -1,0 +1,78 @@
+patch:
+  tags:
+    - vocabulary
+  summary: Переименование словаря
+  operationId: updateAdminVocabulary
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Идентификатор словаря
+      schema:
+        type: integer
+        format: int64
+      example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/AdminUpdateVocabularyRequest.yaml'
+  responses:
+    '200':
+      description: Словарь переименован; возвращается актуальное состояние
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/VocabularySummary.yaml'
+    '400':
+      $ref: '../../../shared/responses/BadRequest.yaml'
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Словарь с указанным vocabularyId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            vocabularyNotFound:
+              summary: Словарь не найден
+              value:
+                code: VOCABULARY_NOT_FOUND
+                message: "Словарь не найден"
+delete:
+  tags:
+    - vocabulary
+  summary: Удаление словаря
+  operationId: deleteAdminVocabulary
+  parameters:
+    - name: vocabularyId
+      in: path
+      required: true
+      description: Идентификатор удаляемого словаря
+      schema:
+        type: integer
+        format: int64
+      example: 1
+  responses:
+    '204':
+      description: Словарь удалён
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'
+    '404':
+      description: Словарь с указанным vocabularyId не существует
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            vocabularyNotFound:
+              summary: Словарь не найден
+              value:
+                code: VOCABULARY_NOT_FOUND
+                message: "Словарь не найден"

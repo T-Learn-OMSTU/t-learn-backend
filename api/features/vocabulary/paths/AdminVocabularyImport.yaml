@@ -1,0 +1,51 @@
+post:
+  tags:
+    - vocabulary
+  summary: Импорт словаря из xls
+  operationId: importAdminVocabulary
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          required:
+            - name
+            - file
+          properties:
+            name:
+              type: string
+              description: Название создаваемого словаря
+              example: "Базовый английский"
+            file:
+              type: string
+              format: binary
+              description: xlsx-файл со словами
+  responses:
+    '201':
+      description: Словарь создан и наполнен словами из файла
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/VocabularySummary.yaml'
+    '400':
+      description: Ошибка валидации запроса или файла импорта
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            validationError:
+              summary: Невалидные параметры запроса
+              value:
+                code: VALIDATION_ERROR
+                message: "Некорректное значение поля"
+            invalidFile:
+              summary: Файл не читается или нарушен формат колонок
+              value:
+                code: VOCABULARY_IMPORT_INVALID
+                message: "Строка 17: пустое значение в колонке word"
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'
+    '403':
+      $ref: '../../../shared/responses/Forbidden.yaml'

@@ -1,0 +1,31 @@
+type: object
+description: Страница списка пользователей
+required:
+  - items
+  - total
+  - page
+  - size
+properties:
+  items:
+    type: array
+    description: Пользователи текущей страницы; пустой массив, если страница за пределами диапазона
+    items:
+      $ref: './AdminUserSummary.yaml'
+  total:
+    type: integer
+    format: int32
+    minimum: 0
+    description: Общее число пользователей с учётом фильтра search; фронту нужно для отрисовки номеров страниц
+    example: 1342
+  page:
+    type: integer
+    format: int32
+    minimum: 1
+    description: Номер возвращённой страницы
+    example: 1
+  size:
+    type: integer
+    format: int32
+    minimum: 1
+    description: Размер страницы
+    example: 67

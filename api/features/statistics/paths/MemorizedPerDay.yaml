@@ -1,0 +1,42 @@
+get:
+  summary: Количество выученных слов по дням
+  operationId: getMemorizedWordsPerDay
+  tags:
+    - statistics
+  parameters:
+    - name: from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Начало периода (включительно)
+      example: '2026-10-11'
+    - name: to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Конец периода (включительно)
+      example: '2026-11-10'
+  responses:
+    '200':
+      description: Выученные слова по дням (возвращаются только дни с ненулевым значением)
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/MemorizedPerDayResponse.yaml'
+    '400':
+      description: Некорректный период
+      content:
+        application/json:
+          schema:
+            $ref: '../../../shared/schemas/Error.yaml'
+          examples:
+            invalidPeriod:
+              value:
+                code: STATISTICS_INVALID_PERIOD
+                message: Дата from позже даты to
+    '401':
+      $ref: '../../../shared/responses/Unauthorized.yaml'

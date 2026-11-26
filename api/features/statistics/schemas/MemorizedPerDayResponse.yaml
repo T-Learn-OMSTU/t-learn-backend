@@ -1,0 +1,14 @@
+type: array
+items:
+  type: object
+  required: [date, count]
+  properties:
+    date:
+      type: string
+      format: date
+      example: '2026-11-07'
+    count:
+      type: integer
+      format: int32
+      minimum: 0
+      example: 6

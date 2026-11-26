@@ -1,0 +1,8 @@
+description: Не авторизован (токен отсутствует или недействителен)
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    example:
+      code: UNAUTHORIZED
+      message: Требуется авторизация

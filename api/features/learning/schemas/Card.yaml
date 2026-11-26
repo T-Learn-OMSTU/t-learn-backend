@@ -1,0 +1,8 @@
+oneOf:
+  - $ref: './NewCard.yaml'
+  - $ref: './RotationCard.yaml'
+discriminator:
+  propertyName: cardType
+  mapping:
+    NEW: './NewCard.yaml'
+    ROTATION: './RotationCard.yaml'

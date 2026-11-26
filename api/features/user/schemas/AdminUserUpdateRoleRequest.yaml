@@ -1,0 +1,12 @@
+type: object
+description: Тело запроса на смену роли пользователя
+required:
+  - role
+properties:
+  role:
+    type: string
+    description: Новая роль пользователя.
+      - USER
+      - MODERATOR
+      - ADMIN
+    example: MODERATOR
